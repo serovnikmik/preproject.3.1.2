@@ -68,7 +68,6 @@ public class AdminController {
                 }
             }
         } else {
-            // Получаем роль USER по имени
             Role userRole = roleService.getRoleByName("ROLE_USER");
             if (userRole != null) {
                 roles.add(userRole);
@@ -94,7 +93,6 @@ public class AdminController {
                              @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
                              Model model) {
 
-        // Проверка уникальности username (кроме текущего пользователя)
         User existingUser = userService.getUserByUsername(user.getUsername());
         if (existingUser != null && existingUser.getId() != id) {
             bindingResult.rejectValue("username", "error.username",
@@ -106,10 +104,8 @@ public class AdminController {
             return "admin/edit";
         }
 
-        // Устанавливаем ID (на всякий случай)
         user.setId(id);
 
-        // Собираем роли
         Set<Role> roles = new HashSet<>();
         if (roleIds != null && !roleIds.isEmpty()) {
             for (Long roleId : roleIds) {
@@ -120,19 +116,15 @@ public class AdminController {
             }
         }
 
-        // Если пароль пустой - оставляем старый
         if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             User existing = userService.getUser(id);
             user.setPassword(existing.getPassword());
         } else {
-            // Шифруем новый пароль
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        // Устанавливаем роли
         user.setRoles(roles);
 
-        // Обновляем
         userService.update(user);
 
         return "redirect:/admin";

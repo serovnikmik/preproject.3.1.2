@@ -40,19 +40,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/login").permitAll()  // ← /login доступен всем!
+                .antMatchers("/", "/login").permitAll()
                 .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")           // ← URL страницы логина
-                .successHandler(successUserHandler)  // ← наш обработчик успешного логина
+                .loginPage("/login")
+                .successHandler(successUserHandler)
                 .permitAll()
                 .and()
                 .logout()
-                .logoutUrl("/logout")          // ← URL для выхода
-                .logoutSuccessUrl("/login?logout")  // ← после выхода на страницу логина с параметром
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
                 .permitAll();
     }
 

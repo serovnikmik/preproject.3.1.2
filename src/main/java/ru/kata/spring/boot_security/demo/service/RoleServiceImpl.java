@@ -105,7 +105,6 @@ public class RoleServiceImpl implements RoleService {
             logger.info("Created default role: ROLE_ADMIN");
         }
 
-        // Проверяем и создаем роль USER если её нет
         if (getRoleByName("ROLE_USER") == null) {
             Role userRole = new Role("ROLE_USER");
             saveRole(userRole);
