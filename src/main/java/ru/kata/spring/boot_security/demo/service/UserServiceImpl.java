@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,8 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
-    private PasswordEncoder passwordEncoder; // Для шифрования паролей
-    private final RoleService roleService; // Для работы с ролями
+    private PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Autowired
     public UserServiceImpl(UserDAO userDAO,
@@ -158,5 +160,17 @@ public class UserServiceImpl implements UserService {
         save(user);
 
         log.info("User created with roles: {}", user.getUsername());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.debug("Loading user by username for security: {}", username);
+        User user = getUserByUsernameWithRoles(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        log.debug("User found: {} with roles: {}", username, user.getRoles());
+        return user;
     }
 }
