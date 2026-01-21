@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.configs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 
 @Component
+@Slf4j
 public class DataInitializer implements CommandLineRunner {
 
     private final RoleService roleService;
@@ -26,7 +28,6 @@ public class DataInitializer implements CommandLineRunner {
     private EntityManager entityManager;
 
     private final PasswordEncoder passwordEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Autowired
     public DataInitializer(RoleService roleService, PasswordEncoder passwordEncoder) {
@@ -69,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
                 .getSingleResult();
 
         if (count == 0) {
-            logger.info("Creating admin user directly...");
+            log.info("Creating admin user directly...");
 
             // Получаем роли
             Role adminRole = entityManager.createQuery(
@@ -94,7 +95,7 @@ public class DataInitializer implements CommandLineRunner {
 
             entityManager.persist(admin);
 
-            logger.info("Admin created successfully");
+            log.info("Admin created successfully");
         }
     }
 
@@ -110,7 +111,7 @@ public class DataInitializer implements CommandLineRunner {
                 .getSingleResult();
 
         if (count == 0) {
-            logger.info("Creating default user directly...");
+            log.info("Creating default user directly...");
 
             Role userRole = entityManager.createQuery(
                             "SELECT r FROM Role r WHERE r.name = 'ROLE_USER'", Role.class)
@@ -129,7 +130,7 @@ public class DataInitializer implements CommandLineRunner {
 
             entityManager.persist(admin);
 
-            logger.info("Default user created successfully");
+            log.info("Default user created successfully");
         }
     }
 }
