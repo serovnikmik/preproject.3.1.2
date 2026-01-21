@@ -77,14 +77,15 @@ public class UserServiceImpl implements UserService {
 
         User existingUser = userDAO.getUser(user.getId());
 
+
         if (existingUser != null) {
             String rawPassword = user.getPassword();
-            String encodedPassword = existingUser.getPassword();
 
-            if (rawPassword == null || rawPassword.isEmpty()
-                    || rawPassword.equals(encodedPassword)
-                    || passwordEncoder.matches(rawPassword, encodedPassword)) {
-                user.setPassword(encodedPassword);
+            if (rawPassword == null || rawPassword.isEmpty()) {
+                user.setPassword(existingUser.getPassword());
+            }
+            else if (passwordEncoder.matches(rawPassword, existingUser.getPassword())) {
+                user.setPassword(existingUser.getPassword());
             } else {
                 user.setPassword(passwordEncoder.encode(rawPassword));
                 log.debug("Password changed for user: {}", user.getUsername());

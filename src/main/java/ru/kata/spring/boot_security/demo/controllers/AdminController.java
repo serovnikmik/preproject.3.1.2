@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +21,6 @@ public class AdminController {
 
     private UserService userService;
     private RoleService roleService;
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setUserService(UserService userService){
@@ -32,11 +30,6 @@ public class AdminController {
     @Autowired
     public void setRoleService(RoleService roleService){
         this.roleService = roleService;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder){
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("")
@@ -115,14 +108,6 @@ public class AdminController {
                 }
             }
         }
-
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            User existing = userService.getUser(id);
-            user.setPassword(existing.getPassword());
-        } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-
         user.setRoles(roles);
 
         userService.update(user);
